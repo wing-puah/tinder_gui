@@ -4,10 +4,12 @@ from tkinter.scrolledtext import ScrolledText
 
 from TinderUser import TinderUser
 from TinderRequest import TinderRequest
+from UserSpecs import UserSpecs
 
 
 class TinderGUI:
     def __init__(self):
+        self._userSpecs = UserSpecs()
         self.win = tk.Tk()
         self.win.resizable(True, True)
         self.win.title("WING'S TINDER GUI")
@@ -37,9 +39,9 @@ class TinderGUI:
         p1_lbl = ttk.Label(
             inputDataFrame, text="Token key that will identify yourself (copy x-auth-token):")
         p1_lbl.pack(side=tk.LEFT)
-        self.tokenValue = tk.StringVar()
+        self.tokenValue = tk.StringVar(value=self._userSpecs.user_token_key)
         self.tokenEntry = ttk.Entry(
-            inputDataFrame, width=18, textvariable=self.tokenValue)
+            inputDataFrame, width=40, textvariable=self.tokenValue)
         self.tokenEntry.pack(side=tk.LEFT)
         inputDataFrame.grid(column=0, row=1, columnspan=2,
                             sticky='WE', padx=5, pady=5)
@@ -49,9 +51,9 @@ class TinderGUI:
         p1_lbl = ttk.Label(
             inputDataFrame, text="No. of times to run (each run is 34 users):")
         p1_lbl.pack(side=tk.LEFT)
-        self.runValues = tk.StringVar()
+        self.runValues = tk.IntVar(value=self._userSpecs.time_to_run)
         self.runEntry = ttk.Entry(
-            inputDataFrame, width=18, textvariable=self.runValues)
+            inputDataFrame, width=10, textvariable=self.runValues)
         self.runEntry.pack(side=tk.LEFT)
         inputDataFrame.grid(column=0, row=2, columnspan=2,
                             sticky='WE', padx=5, pady=5)
@@ -61,23 +63,23 @@ class TinderGUI:
         p1_lbl = ttk.Label(
             inputDataFrame, text="Keywords (put in | separated: e.g. finance|invest|money):")
         p1_lbl.pack(side=tk.LEFT)
-        self.keywordValue = tk.StringVar()
+        self.keywordValue = tk.StringVar(value=self._userSpecs.keyword)
         self.keywordEntry = ttk.Entry(
-            inputDataFrame, width=18, textvariable=self.keywordValue)
+            inputDataFrame, width=80, textvariable=self.keywordValue)
         self.keywordEntry.pack(side=tk.LEFT)
         inputDataFrame.grid(column=0, row=3, columnspan=2,
                             sticky='WE', padx=5, pady=5)
 
     def packSwipePopularUser(self):
         self.popUserState = tk.BooleanVar()
-        self.popUserState.set(True)
+        self.popUserState.set(self._userSpecs.swipe_popular_user)
         chk = ttk.Checkbutton(
             self.win, text="Swipe on popular user", var=self.popUserState)
         chk.grid(column=0, row=4, columnspan=2, sticky="W", padx=5, pady=5)
 
     def swipeUserWhoLikeYou(self):
         self.likeUserState = tk.BooleanVar()
-        self.likeUserState.set(True)
+        self.likeUserState.set(self._userSpecs.swipe_liked_user)
         chk = ttk.Checkbutton(
             self.win, text="Swipe on users who like you", var=self.likeUserState)
         chk.grid(column=1, row=4, columnspan=1, sticky="W", padx=5, pady=5)
@@ -104,24 +106,23 @@ class TinderGUI:
         if(self.likeUserState.get() and user.did_user_like_you()):
             log = req.send_and_log_user_like(
                 user, user.user_who_like_you_log())
-            self.display(log)
+            return log
 
         elif(self.popUserState.get() and user.is_popular_user()):
             log = req.send_and_log_user_like(
                 user, user.popular_user_log())
-            self.display(log)
+            return log
 
         elif(user.user_has_keywords(keyword)):
             log = req.send_and_log_user_like(
                 user, user.like_user_with_keyword_log())
-            self.display(log)
+            return log
 
         else:
-            self.display('nah, just swiping left')
+            return 'nah, just swiping left'
 
     def run_tinder_automate(self):
-        print(self.popUserState.get(), self.likeUserState.get(),
-              self.tokenValue.get(), self.runValues.get(), self.keywordValue.get())
+        self.log_user_input()
         self.display('Starting tinder automation ...')
         req = TinderRequest(self.tokenValue.get())
         keyword = self.keywordValue.get()
@@ -129,6 +130,7 @@ class TinderGUI:
         try:
             runs = self.runValues.get() or 0
             no_of_profile = 0
+            user_log = ''
 
             for i in range(int(runs)):
                 self.display(f'Running {i+1} time(s)')
@@ -138,12 +140,25 @@ class TinderGUI:
 
                 for potential in human:
                     no_of_profile += 1
-                    self.handleSingleUser(potential, keyword, req)
+                    user_log += f'{self.handleSingleUser(potential, keyword, req)}\n'
 
+                self.display(user_log)
                 self.display(f'finish checking {no_of_profile}')
 
         except Exception as e:
             self.display(f'Error encounter:  {e}')
+
+    def log_user_input(self):
+        tokenValue = self.tokenValue.get()
+        keyword = self.keywordValue.get()
+        timeToRun = self.runValues.get()
+        isUserLikeValue = self.likeUserState.get()
+        isSwipePopUser = self.popUserState.get()
+        f = open("userspecs.txt", "w")
+
+        f.write(
+            f"""token: {tokenValue}\nkeyword: {keyword}\ntime: {timeToRun}\nswipeUserLike: {isUserLikeValue}\nswipePopUser:{isSwipePopUser}""")
+        f.close()
 
     def display(self, msg=''):
         self.output.config(state=tk.NORMAL)
