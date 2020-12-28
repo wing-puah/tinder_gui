@@ -5,18 +5,27 @@ FILE_PATH = 'userspecs.txt'
 
 class UserSpecs:
     def __init__(self):
-        self._file = open(FILE_PATH, 'a')
-        if(self._file):
-            file_dict = dict({})
+        if(os.path.exists(FILE_PATH)):
+            file = open(FILE_PATH, 'r')
+        else:
+            file = open(FILE_PATH, 'a+')
 
+        self._file = file
+        if(file):
+            file_dict = dict({})
+            print(f'file: {os.path.getsize(FILE_PATH) }')
             if(os.path.getsize(FILE_PATH) == 0):
                 self._file_dict = file_dict
+                print('in empty file')
                 return
 
-            for line in self._file:
+            for line in file:
+                print('in line', line)
                 [key, value] = line.split(':')
-                file_dict[key] = value
+                print(f'key: {key}, value: {value}')
+                file_dict[key] = value.replace('\n', '').strip()
 
+            print('ending')
             self._file_dict = file_dict
 
     @property
@@ -29,6 +38,7 @@ class UserSpecs:
 
     @property
     def user_token_key(self):
+        print(self.file_dict)
         return self.file_dict['token'] if 'token' in self._file_dict else ''
 
     @property
@@ -41,8 +51,8 @@ class UserSpecs:
 
     @property
     def swipe_liked_user(self):
-        return self.file_dict['swipeUserLike'] if 'swipeUserLike' in self._file_dict else True
+        return self.file_dict['swipeUserLike'] == 'True' if 'swipeUserLike' in self._file_dict else True
 
     @property
     def swipe_popular_user(self):
-        return self.file_dict['swipePopUser'] if 'swipePopUser' in self._file_dict else True
+        return self.file_dict['swipePopUser'] == 'True'if 'swipePopUser' in self._file_dict else True
