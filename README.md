@@ -19,7 +19,10 @@ Simply download this folder. Honestly, you just need the `dist` folder. But I'm 
 3. Go to dist/main and click on main. A popup will appear. Paste the x-auth-token in the token key input, highlighted in red.
    ![my-gui](tinder_gui.jpg)
 
-4. Fill up the rest of the info. And hit Run Tinder Automate. If you see an error in the textbox, let me know! When you hit run, it takes a while before the text appear. Be patient and trust the process!
+4. Fill up the rest of the info. And hit Run Tinder Automate. If you see an error in the textbox, let me know! When you hit run, it takes a while before the text appear. Be patient and trust the process! If you see an error, it might be also be because your token key expires, just repeat step 1 to 3.
+   ![after-running](after_running.jpg)
+
+5. I save your preference locally in your computer in the file `userspecs.txt`. I don't take your token key and data. The next time you reopen the program, it will be prepopulated with the items you key in.
 
 ## Future updates I'm thinking of
 
