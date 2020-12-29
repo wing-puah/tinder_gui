@@ -1,3 +1,3 @@
-from TinderGUI import TinderGUI
+from src.TinderGUI import TinderGUI
 
 TinderGUI()

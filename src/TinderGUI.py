@@ -2,9 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 
-from TinderUser import TinderUser
-from TinderRequest import TinderRequest
-from UserSpecs import UserSpecs
+from .TinderUser import TinderUser
+from .TinderRequest import TinderRequest
+from .UserSpecs import UserSpecs
 
 
 class TinderGUI:
@@ -27,7 +27,7 @@ class TinderGUI:
         self.packScrollTextDisplay()
 
     def packDisclaimer(self):
-        disclaimerText = "Don't leave the keywords empty. If tinder detects you are running bots, you might get banned.\nSimilarly, don't run the loop for too many times."
+        disclaimerText = "Don't leave the keywords empty. If tinder detects you are running bots, you might get banned.\nSimilarly, don't run the loop for too many times.\nKeywords are run by feeding them to RegExp, you can change it accordingly if you are familiar with Reg"
         disclaimerFrame = ttk.Frame(self.win)
         disclaimer_lbl = ttk.Label(disclaimerFrame, text=disclaimerText)
         disclaimer_lbl.pack(side=tk.LEFT)
@@ -122,9 +122,10 @@ class TinderGUI:
             return 'nah, just swiping left'
 
     def run_tinder_automate(self):
-        self.log_user_input()
         self.display('Starting tinder automation ...')
-        req = TinderRequest(self.tokenValue.get())
+        self.log_user_input()
+        # token key will fail if there is space
+        req = TinderRequest(self.tokenValue.get().strip())
         keyword = self.keywordValue.get()
 
         try:
@@ -135,7 +136,6 @@ class TinderGUI:
             for i in range(int(runs)):
                 self.display(f'Running {i+1} time(s)')
                 response = req.get_user_list()
-                print(response)
                 human = response.json()['data']['results']
 
                 for potential in human:

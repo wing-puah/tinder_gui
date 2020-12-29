@@ -13,19 +13,14 @@ class UserSpecs:
         self._file = file
         if(file):
             file_dict = dict({})
-            print(f'file: {os.path.getsize(FILE_PATH) }')
+
             if(os.path.getsize(FILE_PATH) == 0):
                 self._file_dict = file_dict
-                print('in empty file')
                 return
 
             for line in file:
-                print('in line', line)
                 [key, value] = line.split(':')
-                print(f'key: {key}, value: {value}')
                 file_dict[key] = value.replace('\n', '').strip()
-
-            print('ending')
             self._file_dict = file_dict
 
     @property
@@ -38,7 +33,6 @@ class UserSpecs:
 
     @property
     def user_token_key(self):
-        print(self.file_dict)
         return self.file_dict['token'] if 'token' in self._file_dict else ''
 
     @property

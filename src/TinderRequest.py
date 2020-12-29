@@ -24,7 +24,6 @@ class TinderRequest:
             return "oops, can't seem to swipe"
 
     def send_and_log_user_like(self, user, message):
-        print(f'sending: {user.id}, {user.s_number}, {message}')
         url = f'{LIKE_USER_API}/{user.id}?locale=en'
         postRes = self.session.post(url, data={'s_number': user.s_number})
         return self.user_like_req_log(postRes, message)
