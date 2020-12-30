@@ -41,7 +41,7 @@ class TinderGUI:
         p1_lbl.pack(side=tk.LEFT)
         self.tokenValue = tk.StringVar(value=self._userSpecs.user_token_key)
         self.tokenEntry = ttk.Entry(
-            inputDataFrame, width=40, textvariable=self.tokenValue)
+            inputDataFrame, width=40, textvariable=self.tokenValue, show="*")
         self.tokenEntry.pack(side=tk.LEFT)
         inputDataFrame.grid(column=0, row=1, columnspan=2,
                             sticky='WE', padx=5, pady=5)
